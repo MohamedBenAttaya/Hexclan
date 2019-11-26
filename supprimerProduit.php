@@ -1,0 +1,81 @@
+
+<?PHP
+include 'header.php' ;
+include "../../entities/produit.php";
+include "../../core/produitC.php";
+echo "vérifier les champs";
+if ( isset($_POST['supprimer']))
+{
+if (isset($_POST['Referance']) and isset($_POST['Nom']) and isset($_POST['Prix']) and isset($_POST['Code']) and isset($_POST['Quantite']) ){
+	
+$upload_image=$_FILES["myimage"]["name"];
+$folder="../Front_office/images/";
+$folder.=$upload_image;
+$produit1=new produit($_POST['Referance'],$_POST['Nom'],$_POST['Prix'],$_POST['Code'],$folder,$_POST['Quantite'],$folder);
+
+
+move_uploaded_file($_FILES["myimage"]["tmp_name"], "$folder");
+$produit1C=new ProduitC();
+$produit1C->supprimerProduit($produit1);
+
+	
+}else{
+	echo "vérifier les champs";
+}
+//*/
+}
+?>
+ <div class="content-wrapper">
+    <div class="container-fluid">
+      <!-- Breadcrumbs-->
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="#">Produits</a>
+        </li>
+        <li class="breadcrumb-item active">supprimer Produit</li>
+      </ol>
+      <!-- Example DataTables Card-->
+	  <div class="card card-register mx-auto mt-5">
+      <div class="card-header">supprimer Produit</div>
+      <div class="card-body">
+        <form method="POST" action="" enctype="multipart/form-data">
+          <div class="form-group">
+            <div class="form-row">
+              
+                <label for="exampleInputName">Referance</label>
+                <input class="form-control" name="Referance" type="text" aria-describedby="nameHelp" pattern="[0-9]{8}" title="Ce champ doit avoir 8 chiffres ." required>
+              
+			  </div>
+			  <div class="form-row">
+              
+                <label for="exampleInputLastName">Nom du Produit</label>
+                <input class="form-control" name="Nom"  type="text" aria-describedby="nameHelp" pattern="[A-Za-z]{4,}" title="Ce champ doit avoir au moins 4 Characthéres ." required>
+              
+            </div>
+          </div>
+          <div class="form-group">
+		  
+            <label for="exampleInputEmail1">Prix</label>
+            <input class="form-control" name="Prix" type="number" aria-describedby="emailHelp" min=1 max=20 title="le prix doit etre entre 1 et 20 Dt ." required>
+          </div>
+          <div class="form-group">
+            <div class="form-row">
+              
+                <label for="exampleInputPassword1">Code a Barre</label>
+                <input class="form-control" name="Code" type="text" pattern="[0-9]{8}" title="Ce champ doit avoir 8 chiffres ." required>
+              
+			  </div>
+			  <div class="form-row">
+              
+                <label for="exampleConfirmPassword">Quantite</label>
+                <input class="form-control" name="Quantite" type="number" min=1 max=100 title="la quantite doit etre entre 1 et 100 ." required >
+              </div>
+              
+          <input class="form-control" type="submit" name="supprimer" value="supprimer">
+        </form>
+       
+      </div>
+    </div>
+      
+    </div>
+	<?php include 'footer.php' ; ?>
