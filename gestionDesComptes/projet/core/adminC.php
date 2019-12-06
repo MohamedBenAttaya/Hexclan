@@ -53,6 +53,9 @@ try {
     }
 
 
+
+
+
   }
   function modifieradmin($admin,$id,$mdpa){
 		$sql="UPDATE admin SET email=:email,nom=:nom,mdp=:mdp  WHERE id=:id";

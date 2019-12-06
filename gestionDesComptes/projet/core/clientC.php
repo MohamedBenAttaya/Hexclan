@@ -54,8 +54,28 @@ try {
        echo 'Erreur :'.$e->getMessage();
     }
 
+  }
+
+
+
+    function rechercher($email)
+  {
+    $sql =" SELECT * from client WHERE email like '%".$email."%'" ;
+    $db = config::getConnexion();
+    try {
+          $tab = $db->query($sql);
+          return $tab;
+
+    } catch (Exception $e) {
+      echo 'Erreur :'.$e->getMessage();
+    }
 
   }
+
+
+
+
+  
   function modifierclient($client,$id,$mdpa){
 		$sql="UPDATE client SET email=:email,nom=:nom,mdp=:mdp,adresse=:adresse  WHERE id_client=:id";
 

@@ -432,6 +432,15 @@
         <div class="row mt">
           <div class="col-md-12">
             <div class="content-panel">
+            	<div class="col-lg-12">
+				<form method="POST" action="recherclient.php" method="post" id="contactForm">
+				  
+				  <input type="Search" class="text-nowrap align-middle" id="email" name="email" placeholder="Email">
+				   
+				    <input type="submit" name="rechercher" value="Search">
+
+				</form>
+			</div>
               <table class="table table-striped table-advance table-hover">
                 <h4><i class="fa fa-angle-right"></i> Users</h4>
                 <hr>
@@ -474,6 +483,15 @@
                   
                 </tbody>
               </table>
+
+              <div class="container" style="padding-top:20px">
+
+              <form class="form-inline" method="post" action="generate_pdf.php">
+              <button type="submit" id="pdf" name="generate_pdf" class="btn btn-primary"><i class="fa fa-pdf" aria-hidden="true"></i>
+              Telecharger PDF</button>
+              </form>
+              </fieldset>
+              </div>
             </div>
             <!-- /content-panel -->
           </div>
