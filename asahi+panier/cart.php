@@ -346,7 +346,6 @@ function modifierProduct($product,$id){
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-12 col-md-12">
-					<form>
 							<div class="cart-table table-responsive">
 								<table class="table table-bordered">
 									<thead>
@@ -368,8 +367,8 @@ function modifierProduct($product,$id){
 									$shipping=0;
 									while ($row = mysqli_fetch_array($result)) {
 									?>
-									
-										<tr><form action="modifier_commande.php" method="POST">
+									<form action="modifier_commande.php" method="POST">
+										<tr>
 											<td class="product-thumbnail">
 												<a href="#">
 													<img src="<?php echo $row["image"]; ?>" alt="item">
@@ -388,11 +387,11 @@ function modifierProduct($product,$id){
 													<span class="minus-btn">
 														<i class="fa fa-minus"></i>
 													</span>
-													<input type="Number" name="Quantity" value="<?php echo $row["Quantity"] ?>">
-													<input type="hidden" name="id" value="<?php echo $row["id"] ?>">
+													<input type="Number" name="Quantity" id="Quantity" value="<?php echo $row["Quantity"] ?>">
 													<span class="plus-btn">
 															<i class="fa fa-plus"></i>
 														</span>
+														
 													</div>
 												</td>
 												<td class="product-subtotal">
@@ -413,6 +412,7 @@ function modifierProduct($product,$id){
 												?>
 												</td>
 											<td>
+											<input type="hidden" name="id" value="<?php echo $row["id"] ?>">
 												<button class="primary-btn" type="submit" name="modifier">modifier</button>
 											</td>
 										</form>
@@ -424,7 +424,6 @@ function modifierProduct($product,$id){
 										?>
 									</tbody>
 								</table>
-								</form>
 							</div>
 
 							<div class="cart-buttons">
@@ -461,7 +460,6 @@ function modifierProduct($product,$id){
 									<i class="flaticon-right-arrow-forward"></i>
 								</a>
 							</div>
-						</form>	
 					</div>
 				</div>
 			</div>
@@ -625,7 +623,7 @@ function modifierProduct($product,$id){
 									<img src="assets/img/payment/4.png" alt="">
 								</a>
 							</li>
-						</ul>
+					11111111	</ul>
 					</div>
 				</div>
 			</div>
