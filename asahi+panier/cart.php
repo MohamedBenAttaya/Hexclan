@@ -7,7 +7,6 @@
 	?>
 	
 	<?php
-
 $record_per_page = 5;
 $page = '';
 if(isset($_GET["page"]))

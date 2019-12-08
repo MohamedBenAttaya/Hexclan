@@ -376,90 +376,138 @@
     <!-- **********************************************************************************************************************************************************
         MAIN CONTENT
         *********************************************************************************************************************************************************** -->
-    <!--main content start-->
-	
-	<form>
-	<section class="wrapper">
-							<div class="cart-table table-responsive">
-								<table class="table table-bordered">
-									<thead>
-										<tr>
-											<th scope="col">Product</th>
-											<th scope="col">Name</th>
-											<th scope="col">Unit Price</th>
-											<th scope="col">Quantity</th>
-											<th scope="col">Total</th>
-										</tr>
-									</thead>
-									
-									<?php
-									$query = "SELECT * FROM product ORDER BY id ASC";
-									$result = mysqli_query($con,$query);
-									if(mysqli_num_rows($result) > 0) {
-									$total = 0;
-									$shipping=0;
-									while ($row = mysqli_fetch_array($result)) {
+    <?php
+$record_per_page = 5;
+$page = '';
+if(isset($_GET["page"]))
+{
+ $page = $_GET["page"];
+}
+else
+{
+ $page = 1;
+}
+$start_from = ($page-1)*$record_per_page;
+if(isset($_POST['search']))
+{
+    $valueToSearch = $_POST['valueToSearch'];
+		$sort= $_POST['sort'];
+	if($sort=="nc")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%') ORDER BY pname ASC LIMIT $start_from, $record_per_page";
+	else if($sort=="nd")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%') ORDER BY pname DESC LIMIT $start_from, $record_per_page";
+	else if($sort=="pc")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%') ORDER BY price ASC LIMIT $start_from, $record_per_page";
+	else if($sort=="pd")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%') ORDER BY price DESC LIMIT $start_from, $record_per_page";
+	else if($sort=="idcc")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%') ORDER BY IDC ASC LIMIT $start_from, $record_per_page";
+	else if($sort=="idcd")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%') ORDER BY IDC DESC LIMIT $start_from, $record_per_page";
+	else if($sort=="idd")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%') ORDER BY id DESC LIMIT $start_from, $record_per_page";
+	else
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%') ORDER BY id ASC LIMIT $start_from, $record_per_page";
+	$search_result = filterTable($query);
+}
+ else {
+    $query = "SELECT * FROM product WHERE IDC=1 ORDER BY id ASC LIMIT $start_from, $record_per_page";
+    $search_result = filterTable($query);
+}
+
+// function to connect and execute the query
+function filterTable($query)
+{
+    $database_name = "Projet";
+    $con = mysqli_connect("localhost","root","",$database_name);
+    $filter_Result = mysqli_query($con, $query);
+    return $filter_Result;
+}
+
+?>
+	<!--main content start-->
+	<section id="main-content">
+      <section class="wrapper">
+        <h3><i class="fa fa-angle-right"></i>Commandes</h3>
+									<center>
+									<form action="panier.php" method="post">
+									<select name="sort">
+									<option value="nc">nom par ordre croissant</option>
+									<option value="nd">nom par ordre decroissant</option>
+									<option value="pc">prix par ordre croissant</option>
+									<option value="pd">prix par ordre decroissant</option>
+									<option value="idd">id compte par ordre croissant</option>
+									<option value="idd">id compte par ordre decroissant</option>
+									<option value="idd">id commande par ordre decroissant</option>
+									<option value="idc">id commande par ordre croissant</option>
+									</select>
+									<input type="text" name="valueToSearch" placeholder="Value To Search">
+									<input type="submit" name="search" value="Filter"></br></br>
+									</form>
+									</center>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="content-panel">
+              <h4><i class="fa fa-angle-right"></i> Basic Table</h4>
+              <hr>
+              <table class="table">
+                <thead>
+                  <tr>
+					<th>id compte</th>
+                    <th>id commande</th>
+                    <th>Name</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+					<th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+				<?php
+				if(mysqli_num_rows($search_result) > 0) {
+									while ($row = mysqli_fetch_array($search_result)) {
 									?>
-									
-										<tr><form action="modifier_commande.php" method="POST">
-											<td class="product-thumbnail">
-												<a href="#">
-													<img src="<?php echo $row["image"]; ?>" alt="item">
-												</a>
-											</td>
-
-											<td class="product-name"> <?php echo $row["pname"]; ?>
-											</td>
-
-											<td class="product-price">
-												<span class="unit-amount"><?php echo $row["price"]; ?> Dt</span>
-											</td>
-
-											<td class="product-quantity">
-												<div class="input-counter">
-													<span class="minus-btn">
-														<i class="fa fa-minus"></i>
-													</span>
-													<input type="Number" name="Quantity" value="<?php echo $row["Quantity"] ?>">
-													<input type="hidden" name="id" value="<?php echo $row["id"] ?>">
-													<span class="plus-btn">
-															<i class="fa fa-plus"></i>
-														</span>
-													</div>
-												</td>
-												<td class="product-subtotal">
-												<div class="subtotal-amount" id="result"><?php echo number_format($row["Quantity"] * $row["price"], 2); ?></div>
-												<script>
-											
-											var js_price="<?php echo $row["price"]; ?>"
-											$(document).ready(function(){
-											$("#Quantity").on("input", function(){
-											// Print entered value in a div box
-											$("#result").text($(this).val()* js_price);
-											});
-											});
-											</script>
-												<?php
-												echo "<a href=supprimer_commande.php?id=".$row['id']." class='remove'>
-												<i class='fa fa-trash-o'></i>
-												</a>";
-												?>
-												</td>
-											<td>
-												<button class="primary-btn" type="submit" name="modifier">modifier</button>
-											</td>
-										</form>
-										</tr>
-										<?php
-										$total = $total + ($row["Quantity"] * $row["price"]);
-										}
-										}
-										?>
-									</tbody>
-								</table>
-							</div>
-	</section>
-	</form>
+					<form action="modifier_commande.php" method="POST">
+					<tr>
+					<td><?php echo $row["IDC"]; ?></td>
+					<td><?php echo $row["id"]; ?></td>
+					<td><?php echo $row["pname"]; ?></td>
+					<td><?php echo $row["price"]; ?></td>
+					<td><input type="Number" name="Quantity" id="Quantity" value="<?php echo $row["Quantity"] ?>"></td>
+                    <td><?php echo number_format($row["Quantity"] * $row["price"], 2); ?></td>
+					<td>
+							<input type="hidden" name="id" value="<?php echo $row["id"] ?>">
+							<button class="primary-btn" type="submit" name="modifier">modifier</button>
+							<?php
+							echo "<a href=supprimer_commande.php?id=".$row['id']." class='remove'>
+							<i class='fa fa-trash-o'></i>
+							</a>";
+							?>
+					</td>
+					</tr>
+					</form>
+					<?php
+									}
+				}
+					?>
+                </tbody>
+              </table>
+            </div>
+							<center>
+							<?php
+							$page_query = "SELECT * FROM product ORDER BY id ASC";
+							$page_result = filterTable($page_query);
+							$total_records = mysqli_num_rows($page_result);
+							$total_pages = ceil($total_records/$record_per_page);
+							for($i=1;$i<=$total_pages; $i++)
+							{
+								echo '<a href="cart.php?page='.$i.'">'.$i.'_</a>';
+							}
+							?>
+							</center>
+          </div>
+		 </div>
+		</section>
+    </section>
 	
 	
 	
