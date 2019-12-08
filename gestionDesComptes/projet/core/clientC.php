@@ -58,17 +58,16 @@ try {
 
 
 
-    function rechercher($email)
+    public  function rechercher($n)
   {
-    $sql =" SELECT * from client WHERE email like '%".$email."%'" ;
-    $db = config::getConnexion();
-    try {
-          $tab = $db->query($sql);
-          return $tab;
-
-    } catch (Exception $e) {
-      echo 'Erreur :'.$e->getMessage();
-    }
+   
+    
+    $sql="SELECT * FROM client WHERE id_client like '%".$n."%' or email like '%".$n."%' or nom like '%".$n."%' ";
+          $connexion=config::getConnexion();
+          $rep=$connexion->query($sql);
+        
+        $rep->execute();
+            return $rep;
 
   }
 
