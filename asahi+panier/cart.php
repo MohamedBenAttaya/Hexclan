@@ -22,12 +22,33 @@ $start_from = ($page-1)*$record_per_page;
 
 if(isset($_POST['search']))
 {
+	
     $valueToSearch = $_POST['valueToSearch'];
     // search in all table columns
     // using concat mysql function
+	/*
     $query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%')&& (IDC=1) ORDER BY id ASC LIMIT $start_from, $record_per_page";
     $search_result = filterTable($query);
-    
+	// tri
+	if($_POST['sort']='nc')
+		asort($query,SORT_STRING);
+	else if($_POST['sort']='nd')
+		arsort($query,SORT_STRING);
+	*/
+		$sort= $_POST['sort'];
+	if($sort=="nc")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%')&& (IDC=1) ORDER BY pname ASC LIMIT $start_from, $record_per_page";
+	else if($sort=="nd")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%')&& (IDC=1) ORDER BY pname DESC LIMIT $start_from, $record_per_page";
+	else if($sort=="pc")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%')&& (IDC=1) ORDER BY price ASC LIMIT $start_from, $record_per_page";
+	else if($sort=="pd")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%')&& (IDC=1) ORDER BY price DESC LIMIT $start_from, $record_per_page";
+	else if($sort=="idd")
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%')&& (IDC=1) ORDER BY id DESC LIMIT $start_from, $record_per_page";
+	else
+		$query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%')&& (IDC=1) ORDER BY id ASC LIMIT $start_from, $record_per_page";
+	$search_result = filterTable($query);
 }
  else {
     $query = "SELECT * FROM product WHERE IDC=1 ORDER BY id ASC LIMIT $start_from, $record_per_page";
@@ -44,6 +65,20 @@ function filterTable($query)
 }
 
 ?>
+<script>
+    function print(pdf) {
+        // Créer un IFrame.
+        var iframe = document.createElement('iframe');  
+        // Cacher le IFrame.    
+        iframe.style.visibility = "hidden"; 
+        // Définir la source.    
+        iframe.src = pdf;        
+        // Ajouter le IFrame sur la page Web.    
+        document.body.appendChild(iframe);  
+        iframe.contentWindow.focus();       
+        iframe.contentWindow.print(); // Imprimer.
+    }
+</script>
 	
 <html lang="zxx">
     
@@ -349,6 +384,14 @@ function filterTable($query)
 									<tbody>
 									<center>
 									<form action="cart.php" method="post">
+									<select name="sort">
+									<option value="nc">nom par ordre croissant</option>
+									<option value="nd">nom par ordre decroissant</option>
+									<option value="pc">prix par ordre croissant</option>
+									<option value="pd">prix par ordre decroissant</option>
+									<option value="idd">id par ordre decroissant</option>
+									<option value="idc">id par ordre croissant</option>
+									</select>
 									<input type="text" name="valueToSearch" placeholder="Value To Search">
 									<input type="submit" name="search" value="Filter"></br></br>
 									</form>
@@ -486,6 +529,7 @@ function filterTable($query)
 									<i class="flaticon-right-arrow-forward"></i>
 								</a>
 							</div>
+							<button onclick="print('https://waytolearnx.com/test.pdf')">Imprimer le PDF</button>
 					</div>
 				</div>
 			</div>
