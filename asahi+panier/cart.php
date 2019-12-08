@@ -1,61 +1,50 @@
 <!doctype html>
 <?php
-    //session_start();
-    $database_name = "Projet";
+   /* $database_name = "Projet";
     $con = mysqli_connect("localhost","root","",$database_name);
 	mysqli_select_db($con,$database_name);
-	session_start();
-    /*if (isset($_POST["add"])){
-        if (isset($_SESSION["cart"])){
-            $item_array_id = array_column($_SESSION["cart"],"product_id");
-            if (!in_array($_GET["id"],$item_array_id)){
-                $count = count($_SESSION["cart"]);
-                $item_array = array(
-                    'product_id' => $_GET["id"],
-                    'item_name' => $_POST["hidden_name"],
-                    'product_price' => $_POST["hidden_price"],
-                    'item_quantity' => $_POST["quantity"],
-                );
-                $_SESSION["cart"][$count] = $item_array;
-                echo '<script>window.location="cart.php"</script>';
-            }else{
-                echo '<script>alert("Product is already Added to Cart")</script>';
-                echo '<script>window.location="cart.php"</script>';
-            }
-        }else{
-            $item_array = array(
-                'product_id' => $_GET["id"],
-                'item_name' => $_POST["hidden_name"],
-                'product_price' => $_POST["hidden_price"],
-                'item_quantity' => $_POST["quantity"],
-            );
-            $_SESSION["cart"][0] = $item_array;
-        }
-    }
-    if (isset($_GET["action"])){
-        if ($_GET["action"] == "delete"){
-            foreach ($_SESSION["cart"] as $keys => $value){
-                if ($value["product_id"] == $_GET["id"]){
-                    unset($_SESSION["cart"][$keys]);
-                    echo '<script>alert("Product has been Removed...!")</script>';
-                    echo '<script>window.location="cart.php"</script>';
-                }
-            }
-        }
-    }*/
-
-function modifierProduct($product,$id){
-		$database_name = "Projet";
-		$con = mysqli_connect("localhost","root","",$database_name);
-		mysqli_select_db($con,$database_name);
-		$query="UPDATE product SET Quantity=Quantity WHERE id=id";
-		if(mysqli_query($con,$query))
-		header("refresh:1; url=cart.php");
-		else
-		echo"Not updated";
-        }
-		
+	session_start(); */
 	?>
+	
+	<?php
+
+$record_per_page = 5;
+$page = '';
+if(isset($_GET["page"]))
+{
+ $page = $_GET["page"];
+}
+else
+{
+ $page = 1;
+}
+$start_from = ($page-1)*$record_per_page;
+
+if(isset($_POST['search']))
+{
+    $valueToSearch = $_POST['valueToSearch'];
+    // search in all table columns
+    // using concat mysql function
+    $query = "SELECT * FROM product WHERE (CONCAT(id, pname, price, Quantity) LIKE '%".$valueToSearch."%')&& (IDC=1) ORDER BY id ASC LIMIT $start_from, $record_per_page";
+    $search_result = filterTable($query);
+    
+}
+ else {
+    $query = "SELECT * FROM product WHERE IDC=1 ORDER BY id ASC LIMIT $start_from, $record_per_page";
+    $search_result = filterTable($query);
+}
+
+// function to connect and execute the query
+function filterTable($query)
+{
+    $database_name = "Projet";
+    $con = mysqli_connect("localhost","root","",$database_name);
+    $filter_Result = mysqli_query($con, $query);
+    return $filter_Result;
+}
+
+?>
+	
 <html lang="zxx">
     
 <!-- Mirrored from templates.envytheme.com/asahi/cart.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 23 Nov 2019 19:24:37 GMT -->
@@ -358,14 +347,19 @@ function modifierProduct($product,$id){
 										</tr>
 									</thead>
 									<tbody>
-									
+									<center>
+									<form action="cart.php" method="post">
+									<input type="text" name="valueToSearch" placeholder="Value To Search">
+									<input type="submit" name="search" value="Filter"></br></br>
+									</form>
+									</center>
 									<?php
-									$query = "SELECT * FROM product WHERE IDC=1 ORDER BY id ASC";
-									$result = mysqli_query($con,$query);
-									if(mysqli_num_rows($result) > 0) {
+									/*$query = "SELECT * FROM product WHERE IDC=1 ORDER BY id ASC";
+									$result = mysqli_query($con,$query);*/
 									$total = 0;
 									$shipping=0;
-									while ($row = mysqli_fetch_array($result)) {
+									if(mysqli_num_rows($search_result) > 0) {
+									while ($row = mysqli_fetch_array($search_result)) {
 									?>
 									<form action="modifier_commande.php" method="POST">
 										<tr>
@@ -425,7 +419,39 @@ function modifierProduct($product,$id){
 									</tbody>
 								</table>
 							</div>
-
+							<center>
+							<?php
+							$page_query = "SELECT * FROM product WHERE IDC=1 ORDER BY id ASC";
+							$page_result = filterTable($page_query);
+							$total_records = mysqli_num_rows($page_result);
+							$total_pages = ceil($total_records/$record_per_page);
+							for($i=1;$i<=$total_pages; $i++)
+							{
+								echo '<a href="cart.php?page='.$i.'">'.$i.'_</a>';
+							}
+							/* $start_loop = $page;
+							$difference = $total_pages - $page;
+							if($difference <= 5)
+							{
+							$start_loop = $total_pages - 5;
+							}
+							$end_loop = $start_loop + 4;
+							if($page > 1)
+							{
+							echo "<a href='cart.php?page=1'>First</a>";
+							echo "<a href='cart.php?page=".($page - 1)."'><<</a>";
+							}
+							for($i=$start_loop; $i<=$end_loop; $i++)
+							{     
+							echo "<a href='cart.php?page=".$i."'>".$i."</a>";
+							}
+							if($page <= $end_loop)
+							{
+							echo "<a href='cart.php?page=".($page + 1)."'>>></a>";
+							echo "<a href='cart.php?page=".$total_pages."'>Last</a>";
+							} */
+							?>
+							</center>
 							<div class="cart-buttons">
 								<div class="row align-items-center">
 									<div class="col-lg-7 col-sm-7 col-md-7">
