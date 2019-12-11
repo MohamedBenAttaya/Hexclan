@@ -1,30 +1,29 @@
-
 <?PHP
-include 'header.php' ;
+include "header.php";
 include "../../entities/produit.php";
 include "../../core/produitC.php";
-echo "vérifier les champs";
+
 if ( isset($_POST['ajouter']))
 {
 if (isset($_POST['Referance']) and isset($_POST['Nom']) and isset($_POST['Prix']) and isset($_POST['Code']) and isset($_POST['Quantite']) ){
 	
 $upload_image=$_FILES["myimage"]["name"];
-$folder="../Front_office/images/";
-$folder.=$upload_image;
-$produit1=new produit($_POST['Referance'],$_POST['Nom'],$_POST['Prix'],$_POST['Code'],$folder,$_POST['Quantite'],$folder);
 
+$folder="../frontoffice/image/";
 
-move_uploaded_file($_FILES["myimage"]["tmp_name"], "$folder");
+$produit1=new produit($_POST['Referance'],$_POST['Nom'],$_POST['Prix'],$_POST['Code'],$folder."/".$upload_image,$_POST['Quantite'],$folder."/".$upload_image);
+move_uploaded_file($_FILES["myimage"]["tmp_name"], $folder.$upload_image);
 $produit1C=new ProduitC();
 $produit1C->ajouterProduit($produit1);
-
 	
 }else{
-	echo "vérifier les champs";
+	die("verifier");
 }
 //*/
 }
 ?>
+<section id="main-content">
+      <section class="wrapper site-min-height">
  <div class="content-wrapper">
     <div class="container-fluid">
       <!-- Breadcrumbs-->
@@ -43,7 +42,7 @@ $produit1C->ajouterProduit($produit1);
             <div class="form-row">
               
                 <label for="exampleInputName">Referance</label>
-                <input class="form-control" name="Referance" type="text" aria-describedby="nameHelp" pattern="[0-9]{8}" title="Ce champ doit avoir 8 chiffres ." required>
+                <input class="form-control" name="Referance" type="text" aria-describedby="nameHelp"  title="Ce champ doit avoir 8 chiffres ." >
               
 			  </div>
 			  <div class="form-row">
@@ -84,4 +83,4 @@ $produit1C->ajouterProduit($produit1);
     </div>
       
     </div>
-	<?php include 'footer.php' ; ?>
+    
